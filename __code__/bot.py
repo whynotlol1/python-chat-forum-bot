@@ -16,8 +16,10 @@ commands_list = {
         ["/thread_list", "See the list of all threads"],
         ["/my_threads", "See the list of your threads"],
         ["/read_thread", "Read one of the threads"],
+        ["/create_thread", "Create a new thread"],
         ["/subscribe", "Subscribe to one of the threads"],
-        ["/mute_thread", "Mute the notifications from a given thread"]
+        ["/mute_thread", "Mute the notifications from a given thread"],
+        ["/unmute_thread", "Unmute the notifications from a given thread"]
     ]
 }
 
@@ -126,4 +128,31 @@ def logout_step2(message):
     else:
         bot.send_message(message.chat.id, "Error: Wrong password!")
 
-# TODO threads
+
+@bot.message_handler(commands=["create_thread"])
+def create_thread(message):
+    msg = bot.send_message(message.chat.id, "What do you want the theme of the thread to be:")
+    bot.register_next_step_handler(msg, create_thread_step2)
+
+
+def create_thread_step2(message):
+    if check_for_unique_threadname(message.text):
+        msg = bot.send_message(message.chat.id, "Now, please, give your thread a short description:")
+        bot.register_next_step_handler(msg, create_thread_step3, message.text)
+    else:
+        msg = bot.send_message(message.chat.id, f"There already exists a thread with name {message.text}")
+        bot.register_next_step_handler(msg, create_thread)
+
+
+def create_thread_step3(message, threadname):
+    new_thread_id = generate_thread_id()
+    add_thread_to_db(new_thread_id, threadname, message.text)
+    bot.send_message(message.chat.id, f"Thread {threadname} was successfully created!")
+    msg = bot.send_message(message.chat.id, "Now, please, give your thread a detailed description (if you don`t want to do it, type 'NoDesc')")
+    bot.register_next_step_handler(msg, create_thread_step4, threadname)
+
+
+def create_thread_step4(message, threadname):
+    if message.text != "NoDesc":
+        add_thread_description(threadname, message.text)
+        bot.send_message(message.chat.id, f"Successfully dded a description to thred {threadname}!")
