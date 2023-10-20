@@ -1,5 +1,6 @@
 # python-chat-forum-bot
 version: 0.0.1
+
 requirements:
 ```
 python 3.10+
