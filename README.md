@@ -9,6 +9,7 @@ pip3 install sqlite3, telebot
 currently available commands:
 ```
 /start
-/help
+/login
 /logout
+/help
 ```
