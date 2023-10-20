@@ -17,7 +17,8 @@ conn.commit()
 cur.execute("""
 CREATE TABLE IF NOT EXISTS threads
 (
-    name TEXT,
+    id INTEGER,
+    threadname TEXT,
     short_description TEXT,
     description LONGTEXT,
     messages INTEGER
@@ -61,4 +62,25 @@ def create_new_user(user_id, username, password):
     cur.execute("INSERT INTO users VALUES (?,?,?,?)", (int(user_id), username, password, 1))
     conn.commit()
 
-# TODO threads
+
+last_thread_id = 0
+
+
+def generate_thread_id():
+    global last_thread_id
+    last_thread_id += 1
+    return last_thread_id + 1
+
+
+def check_for_unique_threadname(threadname):
+    return cur.execute("SELECT * FROM threads WHERE threadname=?", (threadname,)).fetchone() is None
+
+
+def add_thread_to_db(thread_id, threadname, short_description):
+    cur.execute("INSERT INTO threads (id, threadname, short_description, messages) VALUES (?,?,?,?)", (int(thread_id), threadname, short_description, 0))
+    conn.commit()
+
+
+def add_thread_description(threadname, description):
+    cur.execute("INSERT INTO threads (description) VALUES (?) WHERE threadname=?", (description, threadname))
+    conn.commit()
