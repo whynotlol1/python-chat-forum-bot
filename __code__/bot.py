@@ -61,13 +61,21 @@ def help_handler(message):
         starting_handler(message)
 
 
+@bot.message_handler(commands=["login"])
+def login_through_command(message):
+    login(message.chat.id, True)
+
+
 def login(user_id, require_password):
-    username = get_data(user_id, "username")
-    if require_password:
-        msg = bot.send_message(user_id, f"Please, enter the password for {username}:")
-        bot.register_next_step_handler(msg, login_step2)
+    if check_user_login(user_id)[1] is not None:
+        username = get_data(user_id, "username")
+        if require_password:
+            msg = bot.send_message(user_id, f"Please, enter the password for {username}:")
+            bot.register_next_step_handler(msg, login_step2)
+        else:
+            bot.send_message(user_id, f"Welcome back, {username}! Use /help for the list of commands")
     else:
-        bot.send_message(user_id, f"Welcome back, {username}! Use /help for the list of commands")
+        bot.send_message(user_id, "Sorry, but you don't have an account yet! Use /start to register an account.")
 
 
 def login_step2(message):
