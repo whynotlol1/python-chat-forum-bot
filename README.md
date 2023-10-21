@@ -11,6 +11,7 @@ currently available commands:
 /start
 /login
 /logout
+/delete_account
 /help
 /create_thread
 /thread_list
