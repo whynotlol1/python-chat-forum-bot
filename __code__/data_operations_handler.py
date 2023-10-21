@@ -1,4 +1,5 @@
 import sqlite3
+import json
 
 conn = sqlite3.connect("__misc__/data.db", check_same_thread=False)
 cur = conn.cursor()
@@ -18,9 +19,9 @@ cur.execute("""
 CREATE TABLE IF NOT EXISTS threads
 (
     id INTEGER,
+    author_id INTEGER,
     threadname TEXT,
-    short_description TEXT,
-    description LONGTEXT,
+    description TEXT,
     messages INTEGER
 )
 """)
@@ -63,24 +64,45 @@ def create_new_user(user_id, username, password):
     conn.commit()
 
 
+def delete_account_from_db(user_id):
+    cur.execute("DELETE FROM users WHERE user_id=?", (int(user_id),))
+    conn.commit()
+
+
 last_thread_id = 0
 
 
 def generate_thread_id():
     global last_thread_id
     last_thread_id += 1
-    return last_thread_id + 1
+    return last_thread_id
 
 
 def check_for_unique_threadname(threadname):
     return cur.execute("SELECT * FROM threads WHERE threadname=?", (threadname,)).fetchone() is None
 
 
-def add_thread_to_db(thread_id, threadname, short_description):
-    cur.execute("INSERT INTO threads (id, threadname, short_description, messages) VALUES (?,?,?,?)", (int(thread_id), threadname, short_description, 0))
+def add_thread(thread_id, threadname, description, user_id):
+    cur.execute("INSERT INTO threads VALUES (?,?,?,?,?)", (int(thread_id), int(user_id), threadname, description, 0))
     conn.commit()
+    add_thread_to_list(thread_id, threadname, description)
 
 
-def add_thread_description(threadname, description):
-    cur.execute("INSERT INTO threads (description) VALUES (?) WHERE threadname=?", (description, threadname))
-    conn.commit()
+def add_thread_to_list(user_id, thread_id, threadname, description):
+    thread_json = {
+        "global_info": {
+            "id": thread_id,
+            "auth": user_id,
+            "name": threadname,
+            "desc": description
+        },
+        "messages": {
+            "": ""
+        }
+    }
+    with open(f"__misc__/_threads_/{threadname}.json", "w") as output:
+        json.dump(thread_json, output)
+
+
+def get_threads_list():
+    return cur.execute("SELECT * FROM threads").fetchall()
