@@ -30,6 +30,10 @@ def callback_query(call):
             login(call.message.chat.id, True)
         case "register":
             register(call.message.chat.id)
+        case "created_by":
+            return_threads_list_by_user_id(call.message.chat.id)
+        case "read_by":
+            pass
 
 
 @bot.message_handler(commands=["start"])
@@ -173,4 +177,22 @@ def return_threads_list(message):
     for el in threads_list:
         msg += f"Name: {el[2]} | Description: {el[3]} \n"
         msg += ("-" * 20) + "\n"
+    bot.send_message(message.chat.id, msg)
+
+
+@bot.message_handler(commands=["my_threads"])
+def choose_threads_to_return(message):
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton(text="See the threads you created", callback_data="created_by"))
+    markup.add(types.InlineKeyboardButton(text="See the threads you read", callback_data="read_by"))
+    bot.send_message(message.chat.id, "Do you want to see the threads you created or the threads you read?", reply_markup=markup)
+
+
+def return_threads_list_by_user_id(user_id):
+    threads_list = get_threads_list()
+    msg = "Threads you created: \n"
+    for el in threads_list:
+        if el[1] == user_id
+            msg += f"Name: {el[2]} | Description: {el[3]} \n"
+            msg += ("-" * 20) + "\n"
     bot.send_message(message.chat.id, msg)
