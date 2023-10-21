@@ -15,6 +15,7 @@ currently available commands:
 /help
 /create_thread
 /thread_list
+/my_threads (partially)
 ```
 # Make the bot work
 ```
