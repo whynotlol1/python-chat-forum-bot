@@ -192,7 +192,7 @@ def return_threads_list_by_user_id(user_id):
     threads_list = get_threads_list()
     msg = "Threads you created: \n"
     for el in threads_list:
-        if el[1] == user_id
+        if el[1] == user_id:
             msg += f"Name: {el[2]} | Description: {el[3]} \n"
             msg += ("-" * 20) + "\n"
-    bot.send_message(message.chat.id, msg)
+    bot.send_message(user_id, msg)
