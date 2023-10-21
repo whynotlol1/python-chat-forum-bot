@@ -82,10 +82,10 @@ def check_for_unique_threadname(threadname):
     return cur.execute("SELECT * FROM threads WHERE threadname=?", (threadname,)).fetchone() is None
 
 
-def add_thread(thread_id, threadname, description, user_id):
+def add_thread(thread_id, user_id, threadname, description):
     cur.execute("INSERT INTO threads VALUES (?,?,?,?,?)", (int(thread_id), int(user_id), threadname, description, 0))
     conn.commit()
-    add_thread_to_list(thread_id, threadname, description)
+    add_thread_to_list(thread_id, user_id, threadname, description)
 
 
 def add_thread_to_list(user_id, thread_id, threadname, description):
