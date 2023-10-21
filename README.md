@@ -13,6 +13,7 @@ currently available commands:
 /logout
 /help
 /create_thread
+/thread_list
 ```
 # Make the bot work
 ```
