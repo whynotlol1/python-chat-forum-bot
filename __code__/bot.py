@@ -13,13 +13,10 @@ commands_list = {
         ["/help", "See the list of commands"]
     ],
     "Threads": [
+        ["/create_thread", "Create a new thread"],
         ["/thread_list", "See the list of all threads"],
         ["/my_threads", "See the list of your threads"],
-        ["/read_thread", "Read one of the threads"],
-        ["/create_thread", "Create a new thread"],
-        ["/subscribe", "Subscribe to one of the threads"],
-        ["/mute_thread", "Mute the notifications from a given thread"],
-        ["/unmute_thread", "Unmute the notifications from a given thread"]
+        ["/read_thread", "Read one of the threads"]
     ]
 }
 
@@ -129,6 +126,25 @@ def logout_step2(message):
         bot.send_message(message.chat.id, "Error: Wrong password!")
 
 
+@bot.message_handler(commands=["delete_account"])
+def delete_account(message):
+    if check_user_login(message.chat.id)[0]:
+        username = get_data(message.chat.id, "username")
+        msg = bot.send_message(message.chat.id, f"Please, enter the password for {username} to delete the account:")
+        bot.register_next_step_handler(msg, delete_account_step2)
+    else:
+        starting_handler(message)
+
+
+def delete_account_step2(message):
+    password = get_data(message.chat.id, "password")
+    if message.text == password:
+        delete_account_from_db(message.chat.id)
+        bot.send_message(message.chat.id, "Deleted your account successfully!")
+    else:
+        bot.send_message(message.chat.id, "Error: Wrong password!")
+
+
 @bot.message_handler(commands=["create_thread"])
 def create_thread(message):
     msg = bot.send_message(message.chat.id, "What do you want the theme of the thread to be:")
@@ -146,13 +162,15 @@ def create_thread_step2(message):
 
 def create_thread_step3(message, threadname):
     new_thread_id = generate_thread_id()
-    add_thread_to_db(new_thread_id, threadname, message.text)
+    add_thread(new_thread_id, threadname, message.text, message.chat.id)
     bot.send_message(message.chat.id, f"Thread {threadname} was successfully created!")
-    msg = bot.send_message(message.chat.id, "Now, please, give your thread a detailed description (if you don`t want to do it, type 'NoDesc')")
-    bot.register_next_step_handler(msg, create_thread_step4, threadname)
 
 
-def create_thread_step4(message, threadname):
-    if message.text != "NoDesc":
-        add_thread_description(threadname, message.text)
-        bot.send_message(message.chat.id, f"Successfully dded a description to thred {threadname}!")
+@bot.message_handler(commands=["thread_list"])
+def return_threads_list(message):
+    threads_list = get_threads_list()
+    msg = "Threads: \n"
+    for el in threads_list:
+        msg += f"Name: {el[2]} | Description: {el[3]} \n"
+        msg += ("-" * 20) + "\n"
+    bot.send_message(message.chat.id, msg)
