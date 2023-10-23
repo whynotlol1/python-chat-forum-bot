@@ -30,10 +30,6 @@ def callback_query(call):
             login(call.message.chat.id, True)
         case "register":
             register(call.message.chat.id)
-        case "created_by":
-            return_threads_list_by_user_id(call.message.chat.id)
-        case "read_by":
-            pass
 
 
 @bot.message_handler(commands=["start"])
@@ -187,10 +183,7 @@ def return_threads_list(message):
 @bot.message_handler(commands=["my_threads"])
 def choose_threads_to_return(message):
     if check_user_login(message.chat.id)[0]:
-        markup = types.InlineKeyboardMarkup()
-        markup.add(types.InlineKeyboardButton(text="See the threads you created", callback_data="created_by"))
-        markup.add(types.InlineKeyboardButton(text="See the threads you read", callback_data="read_by"))
-        bot.send_message(message.chat.id, "Do you want to see the threads you created or the threads you read?", reply_markup=markup)
+        return_threads_list_by_user_id(message.chat.id)
     else:
         starting_handler(message)
 
@@ -203,3 +196,32 @@ def return_threads_list_by_user_id(user_id):
             msg += f"Name: {el[2]} | Description: {el[3]} \n"
             msg += ("-" * 20) + "\n"
     bot.send_message(user_id, msg)
+
+
+@bot.message_handler(commands=["read_thread"])
+def read_handler0(message):
+    if check_user_login(message.chat.id):
+        msg = bot.send_message(message.chat.id, "What thread would you like to read?")
+        bot.register_next_step_handler(msg, read_handler1)
+    else:
+        starting_handler(message)
+
+
+def read_handler1(message):
+    if check_for_existing_thread(message.text):
+        thread = parse_thread(message.text)
+        bot.send_message(message.chat.id, f"Now reading the {thread['global_info']['name']} thread")
+        msg = bot.send_message(message.chat.id, "How many latest messages of this thread do you want to see? (Type a number)")
+        bot.register_next_step_handler(msg, show_msgs, thread)
+    else:
+        msg = bot.send_message(message.chat.id, "Sorry, but it seems like this thread does not exist! Try again.")
+        bot.register_next_step_handler(msg, read_handler0)
+
+
+def show_msgs(message, thread):
+    if message.text <= len(thread["messages"]):
+        for i in range((len(thread["messages"]) - message.text), len(thread["messages"])):
+            bot.send_message(message.chat.id, f"{thread['messages'][i][0]}: {thread['messages'][i][1]}")
+    else:
+        for i in range(len(thread["messages"])):
+            bot.send_message(message.chat.id, f"{thread['messages'][i][0]}: {thread['messages'][i][1]}")
