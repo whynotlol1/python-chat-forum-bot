@@ -98,9 +98,19 @@ def add_thread_to_list(thread_id, user_id, threadname, description):
         },
         "messages": []
     }
-    with open(f"__misc__/_threads_/{threadname}.json", "w") as output:
+    file_path = f"__misc__/_threads_/{threadname}.json"
+    with open(file_path, "w") as output:
         json.dump(thread_json, output)
 
 
 def get_threads_list():
     return cur.execute("SELECT * FROM threads").fetchall()
+
+
+def check_for_existing_thread(threadname):
+    return cur.execute("SELECT * FROM threads WHERE threadname=?", (threadname,)).fetchone() is None
+
+
+def parse_thread(threadname):
+    file_path = f"__misc__/_threads_/{threadname}.json"
+    return json.loads(file_path)
