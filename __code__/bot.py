@@ -151,8 +151,9 @@ def delete_account_step2(message):
 
 @bot.message_handler(commands=["create_thread"])
 def create_thread(message):
-    msg = bot.send_message(message.chat.id, "What do you want the theme of the thread to be:")
-    bot.register_next_step_handler(msg, create_thread_step2)
+    if check_user_login(message.chat.id)[0]:
+        msg = bot.send_message(message.chat.id, "What do you want the theme of the thread to be:")
+        bot.register_next_step_handler(msg, create_thread_step2)
 
 
 def create_thread_step2(message):
@@ -166,26 +167,32 @@ def create_thread_step2(message):
 
 def create_thread_step3(message, threadname):
     new_thread_id = generate_thread_id()
-    add_thread(new_thread_id, threadname, message.text, message.chat.id)
+    add_thread(new_thread_id, message.chat.id, threadname, message.text)
     bot.send_message(message.chat.id, f"Thread {threadname} was successfully created!")
 
 
 @bot.message_handler(commands=["thread_list"])
 def return_threads_list(message):
-    threads_list = get_threads_list()
-    msg = "Threads: \n"
-    for el in threads_list:
-        msg += f"Name: {el[2]} | Description: {el[3]} \n"
-        msg += ("-" * 20) + "\n"
-    bot.send_message(message.chat.id, msg)
+    if check_user_login(message.chat.id)[0]:
+        threads_list = get_threads_list()
+        msg = "Threads: \n"
+        for el in threads_list:
+            msg += f"Name: {el[2]} | Description: {el[3]} \n"
+            msg += ("-" * 20) + "\n"
+        bot.send_message(message.chat.id, msg)
+    else:
+        starting_handler(message)
 
 
 @bot.message_handler(commands=["my_threads"])
 def choose_threads_to_return(message):
-    markup = types.InlineKeyboardMarkup()
-    markup.add(types.InlineKeyboardButton(text="See the threads you created", callback_data="created_by"))
-    markup.add(types.InlineKeyboardButton(text="See the threads you read", callback_data="read_by"))
-    bot.send_message(message.chat.id, "Do you want to see the threads you created or the threads you read?", reply_markup=markup)
+    if check_user_login(message.chat.id)[0]:
+        markup = types.InlineKeyboardMarkup()
+        markup.add(types.InlineKeyboardButton(text="See the threads you created", callback_data="created_by"))
+        markup.add(types.InlineKeyboardButton(text="See the threads you read", callback_data="read_by"))
+        bot.send_message(message.chat.id, "Do you want to see the threads you created or the threads you read?", reply_markup=markup)
+    else:
+        starting_handler(message)
 
 
 def return_threads_list_by_user_id(user_id):
