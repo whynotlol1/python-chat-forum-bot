@@ -16,7 +16,8 @@ commands_list = {
         ["/create_thread", "Create a new thread"],
         ["/thread_list", "See the list of all threads"],
         ["/my_threads", "See the list of your threads"],
-        ["/read_thread", "Read one of the threads"]
+        ["/read_thread", "Read one of the threads"],
+        ["write_to_thread", "Write a message in one of the threads"]
     ]
 }
 
@@ -225,3 +226,26 @@ def show_msgs(message, thread):
     else:
         for i in range(len(thread["messages"])):
             bot.send_message(message.chat.id, f"{thread['messages'][i][0]}: {thread['messages'][i][1]}")
+
+
+@bot.message_handler(commands=["write_to_thread"])
+def write_handler0(message):
+    if check_user_login(message.chat.id):
+        msg = bot.send_message(message.chat.id, "What thread would you like to write to?")
+        bot.register_next_step_handler(msg, write_handler1)
+    else:
+        starting_handler(message)
+
+
+def write_handler1(message):
+    if check_for_existing_thread(message.text):
+        msg = bot.send_message(message.chat.id, "Now, please, enter the message text:")
+        bot.register_next_step_handler(msg, write_handler2, message.text)
+    else:
+        msg = bot.send_message(message.chat.id, "Sorry, but it seems like this thread does not exist! Try again.")
+        bot.register_next_step_handler(msg, write_handler0)
+        
+        
+def write_handler2(message, threadname):
+    write_to(threadname, message.chat.id, message.text)
+    bot.send_message(message.chat.id, f"Your message has been successfully added to the {threadname} thread!")
