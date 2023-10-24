@@ -244,8 +244,8 @@ def write_handler1(message):
     else:
         msg = bot.send_message(message.chat.id, "Sorry, but it seems like this thread does not exist! Try again.")
         bot.register_next_step_handler(msg, write_handler0)
-        
-        
+
+
 def write_handler2(message, threadname):
     write_to(threadname, message.chat.id, message.text)
     bot.send_message(message.chat.id, f"Your message has been successfully added to the {threadname} thread!")
