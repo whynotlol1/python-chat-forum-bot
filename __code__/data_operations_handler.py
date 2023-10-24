@@ -108,7 +108,7 @@ def get_threads_list():
 
 
 def check_for_existing_thread(threadname):
-    return cur.execute("SELECT * FROM threads WHERE threadname=?", (threadname,)).fetchone() is None
+    return cur.execute("SELECT * FROM threads WHERE threadname=?", (threadname,)).fetchone() is not None
 
 
 def parse_thread(threadname):
