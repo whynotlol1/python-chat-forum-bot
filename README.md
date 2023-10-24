@@ -1,4 +1,4 @@
-# ChatForumBot
+# ChatForumBot [DOES NOT WORK YET]
 ```
 version: 0.0.7
 ```
