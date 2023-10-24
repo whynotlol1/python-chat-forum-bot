@@ -1,7 +1,8 @@
 # ChatForumBot
+```
 version: 0.0.7
-
-requirements:
+```
+# requirements:
 ```
 python 3.10+
 pip3 install sqlite3, telebot
