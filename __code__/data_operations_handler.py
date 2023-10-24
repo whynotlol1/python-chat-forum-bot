@@ -121,5 +121,8 @@ def write_to(threadname, user_id, message_text):
     thread = parse_thread(threadname)
     msgs_amount = cur.execute("SELECT * FROM threads WHERE threadname=?", (threadname,)).fetchone()[4]
     thread["messages"].append([username, message_text])
+    file_path = f"__misc__/_threads_/{threadname}.json"
+    with open(file_path, "w") as output:
+        json.dump(thread, output)
     cur.execute("UPDATE threads SET messages=? WHERE threadname=?", (int(msgs_amount), threadname))
     conn.commit()
