@@ -17,7 +17,7 @@ commands_list = {
         ["/thread_list", "See the list of all threads"],
         ["/my_threads", "See the list of your threads"],
         ["/read_thread", "Read one of the threads"],
-        ["write_to_thread", "Write a message in one of the threads"]
+        ["/write_to_thread", "Write a message in one of the threads"]
     ]
 }
 
