@@ -2,7 +2,7 @@
 ```
 version: 0.0.7
 ```
-# requirements:
+# Requirements:
 ```
 python 3.10+
 pip3 install sqlite3, telebot
