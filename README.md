@@ -1,22 +1,10 @@
 # ChatForumBot
-version: 0.0.6
+version: 0.0.7
 
 requirements:
 ```
 python 3.10+
 pip3 install sqlite3, telebot
-```
-currently available commands:
-```
-/start
-/login
-/logout
-/delete_account
-/help
-/create_thread
-/thread_list
-/my_threads
-/read_thread
 ```
 # Make the bot work
 ```
