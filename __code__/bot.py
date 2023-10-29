@@ -12,7 +12,8 @@ commands_list = {
         ["/delete_account", "Delete your account"]
     ],
     "General": [
-        ["/help", "See the list of commands"]
+        ["/help", "See the list of commands"],
+        ["/rules", "See the list of rules"]
     ],
     "Threads": [
         ["/create_thread", "Create a new thread"],
@@ -20,6 +21,20 @@ commands_list = {
         ["/my_threads", "See the list of your threads"],
         ["/read_thread", "Read one of the threads"],
         ["/write_to_thread", "Write a message in one of the threads"]
+    ]
+}
+rules_list = {
+    "Account": [
+        [1, "Do not use any bad words in your username (e.g. N-word)"],
+        [2, "Do not use bot commands in your username (e.g. /start)"]
+    ],
+    "Threads": [
+        [1, "Do not discuss anything which breaks the law of your country and/or the international law (e.g. drugs)"],
+        [2, "Do not insult other users"],
+        [3, "Discuss things in the respective threads (e.g. discuss food only in the 'food' thread and not in the 'pets' thread)"]
+    ],
+    "Copyright (for developers)": [
+        [1, "Feel free to use the bot's source code in your project for as long as you credit @whynotlol1 (github) or @cat_dev_lol (telegram)"]
     ]
 }
 
@@ -49,6 +64,20 @@ def starting_handler(message):
     bot.send_message(message.chat.id, "Before using the bot, you need to log in or register.", reply_markup=markup)
 
 
+@bot.message_handler(commands=["rules"])
+def rules_handler(message):
+    if check_user_login(message.chat.id)[0]:
+        msg = "Rules: \n"
+        for rule_group in rules_list.keys():
+            msg += f"==== {rule_group} ====\n"
+            for rule in rules_list[rule_group]:
+                msg += f"{rule[0]}: {rule[1]}\n"
+                msg += ("-" * 20) + "\n"
+        bot.send_message(message.chat.id, msg)
+    else:
+        starting_handler(message)
+
+
 @bot.message_handler(commands=["help"])
 def help_handler(message):
     if check_user_login(message.chat.id)[0]:
@@ -76,7 +105,7 @@ def login(user_id, require_password):
             msg = bot.send_message(user_id, f"Please, enter the password for {username}:")
             bot.register_next_step_handler(msg, login_step2)
         else:
-            bot.send_message(user_id, f"Welcome back, {username}! Use /help for the list of commands.")
+            bot.send_message(user_id, f"Welcome back, {username}! Use /help for the list of commands. Make sure not to break the /rules!")
     else:
         bot.send_message(user_id, "Sorry, but you don't have an account yet! Use /start to register an account.")
 
@@ -85,7 +114,7 @@ def login_step2(message):
     password = get_data(message.chat.id, "password")
     if message.text == password:
         set_user_login(message.chat.id, True)
-        bot.send_message(message.chat.id, "Logged in successfully! Use /help for the list of commands.")
+        bot.send_message(message.chat.id, "Logged in successfully! Use /help for the list of commands. Make sure not to break the /rules!")
     else:
         msg = bot.send_message(message.chat.id, "Error: Wrong password!")
         bot.register_next_step_handler(msg, login, (message.chat.id, True))
@@ -108,7 +137,7 @@ def register_step2(message):
 def register_step3(message, username):
     password = message.text
     create_new_user(message.chat.id, username, password)
-    bot.send_message(message.chat.id, f"Registered you as {username} successfully! Use /help for the list of commands.")
+    bot.send_message(message.chat.id, f"Registered you as {username} successfully! Use /help for the list of commands. Make sure not to break the /rules!")
 
 
 @bot.message_handler(commands=["logout"])
@@ -237,7 +266,7 @@ def read_handler1(message):
                 bot.send_message(message.chat.id, "There are no messages in this thread.")
         else:
             msg = bot.send_message(message.chat.id, "Sorry, but it seems like this thread does not exist! Try again.")
-            bot.register_next_step_handler(msg, read_handler0)
+            bot.register_next_step_handler(msg, read_handler1)
 
 
 def show_msgs(message, thread):
@@ -269,7 +298,7 @@ def write_handler1(message):
             bot.register_next_step_handler(msg, write_handler2, message.text)
         else:
             msg = bot.send_message(message.chat.id, "Sorry, but it seems like this thread does not exist! Try again.")
-            bot.register_next_step_handler(msg, write_handler0)
+            bot.register_next_step_handler(msg, write_handler1)
 
 
 def write_handler2(message, threadname):
