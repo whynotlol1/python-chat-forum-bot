@@ -29,9 +29,11 @@ rules_list = {
         [2, "Do not use bot commands in your username (e.g. /start)"]
     ],
     "Threads": [
-        [1, "Do not discuss anything which breaks the law of your country and/or the international law (e.g. drugs)"],
-        [2, "Do not insult other users"],
-        [3, "Discuss things in the respective threads (e.g. discuss food only in the 'food' thread and not in the 'pets' thread)"]
+        [1, "Do not use any bad words in your username (e.g. N-word)"],
+        [2, "Do not use bot commands in your username (e.g. /start)"],
+        [3, "Do not discuss anything which breaks the law of your country and/or the international law (e.g. drugs)"],
+        [4, "Do not insult other users"],
+        [5, "Discuss things in the respective threads (e.g. discuss food only in the 'food' thread and not in the 'pets' thread)"]
     ],
     "Copyright (for developers)": [
         [1, "Feel free to use the bot's source code in your project for as long as you credit @whynotlol1 (github) or @cat_dev_lol (telegram)"]
