@@ -113,7 +113,8 @@ def check_for_existing_thread(threadname):
 
 def parse_thread(threadname):
     file_path = f"__misc__/_threads_/{threadname}.json"
-    return json.loads(file_path)
+    with open(file_path, "r") as output:
+        return json.loads(output.read())
 
 
 def write_to(threadname, user_id, message_text):
@@ -123,6 +124,6 @@ def write_to(threadname, user_id, message_text):
     thread["messages"].append([username, message_text])
     file_path = f"__misc__/_threads_/{threadname}.json"
     with open(file_path, "w") as output:
-        json.dump(thread, output)
+        output.write(json.dumps(thread))
     cur.execute("UPDATE threads SET messages=? WHERE threadname=?", (int(msgs_amount), threadname))
     conn.commit()
