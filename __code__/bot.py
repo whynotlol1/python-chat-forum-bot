@@ -58,6 +58,7 @@ def help_handler(message):
             for command in commands_list[command_group]:
                 msg += f"{command[0]}: {command[1]}\n"
                 msg += ("-" * 20) + "\n"
+        msg += "If you want to stop executing any command, type 'quit'!"
         bot.send_message(message.chat.id, msg)
     else:
         starting_handler(message)
@@ -121,12 +122,15 @@ def logout(message):
 
 
 def logout_step2(message):
-    password = get_data(message.chat.id, "password")
-    if message.text == password:
-        set_user_login(message.chat.id, False)
-        bot.send_message(message.chat.id, "Logged out successfully!")
+    if message.text.lower() == "quit":
+        bot.send_message(message.chat.id, "Quitting logout process")
     else:
-        bot.send_message(message.chat.id, "Error: Wrong password!")
+        password = get_data(message.chat.id, "password")
+        if message.text == password:
+            set_user_login(message.chat.id, False)
+            bot.send_message(message.chat.id, "Logged out successfully!")
+        else:
+            bot.send_message(message.chat.id, "Error: Wrong password!")
 
 
 @bot.message_handler(commands=["delete_account"])
@@ -140,12 +144,15 @@ def delete_account(message):
 
 
 def delete_account_step2(message):
-    password = get_data(message.chat.id, "password")
-    if message.text == password:
-        delete_account_from_db(message.chat.id)
-        bot.send_message(message.chat.id, "Deleted your account successfully!")
+    if message.text.lower() == "quit":
+        bot.send_message(message.chat.id, "Quitting delete_account process")
     else:
-        bot.send_message(message.chat.id, "Error: Wrong password!")
+        password = get_data(message.chat.id, "password")
+        if message.text == password:
+            delete_account_from_db(message.chat.id)
+            bot.send_message(message.chat.id, "Deleted your account successfully!")
+        else:
+            bot.send_message(message.chat.id, "Error: Wrong password!")
 
 
 @bot.message_handler(commands=["create_thread"])
@@ -156,18 +163,24 @@ def create_thread(message):
 
 
 def create_thread_step2(message):
-    if check_for_unique_threadname(message.text):
-        msg = bot.send_message(message.chat.id, "Now, please, give your thread a short description:")
-        bot.register_next_step_handler(msg, create_thread_step3, message.text)
+    if message.text.lower() == "quit":
+        bot.send_message(message.chat.id, "Quitting create_thread process")
     else:
-        msg = bot.send_message(message.chat.id, f"There already exists a thread with name {message.text}.")
-        bot.register_next_step_handler(msg, create_thread)
+        if check_for_unique_threadname(message.text):
+            msg = bot.send_message(message.chat.id, "Now, please, give your thread a short description:")
+            bot.register_next_step_handler(msg, create_thread_step3, message.text)
+        else:
+            msg = bot.send_message(message.chat.id, f"There already exists a thread with name {message.text}.")
+            bot.register_next_step_handler(msg, create_thread)
 
 
 def create_thread_step3(message, threadname):
-    new_thread_id = generate_thread_id()
-    add_thread(new_thread_id, message.chat.id, threadname, message.text)
-    bot.send_message(message.chat.id, f"Thread {threadname} was successfully created!")
+    if message.text.lower() == "quit":
+        bot.send_message(message.chat.id, "Quitting create_thread process")
+    else:
+        new_thread_id = generate_thread_id()
+        add_thread(new_thread_id, message.chat.id, threadname, message.text)
+        bot.send_message(message.chat.id, f"Thread {threadname} was successfully created!")
 
 
 @bot.message_handler(commands=["thread_list"])
@@ -211,17 +224,20 @@ def read_handler0(message):
 
 
 def read_handler1(message):
-    if check_for_existing_thread(message.text):
-        thread = parse_thread(message.text)
-        if len(thread["messages"]) != 0:
-            bot.send_message(message.chat.id, f"Now reading the {thread['global_info']['name']} thread.")
-            msg = bot.send_message(message.chat.id, "How many latest messages of this thread do you want to see? (Type a number)")
-            bot.register_next_step_handler(msg, show_msgs, thread)
-        else:
-            bot.send_message(message.chat.id, "There are no messages in this thread.")
+    if message.text.lower() == "quit":
+        bot.send_message(message.chat.id, "Quitting read_handler process")
     else:
-        msg = bot.send_message(message.chat.id, "Sorry, but it seems like this thread does not exist! Try again.")
-        bot.register_next_step_handler(msg, read_handler0)
+        if check_for_existing_thread(message.text):
+            thread = parse_thread(message.text)
+            if len(thread["messages"]) != 0:
+                bot.send_message(message.chat.id, f"Now reading the {thread['global_info']['name']} thread.")
+                msg = bot.send_message(message.chat.id, "How many latest messages of this thread do you want to see? (Type a number)")
+                bot.register_next_step_handler(msg, show_msgs, thread)
+            else:
+                bot.send_message(message.chat.id, "There are no messages in this thread.")
+        else:
+            msg = bot.send_message(message.chat.id, "Sorry, but it seems like this thread does not exist! Try again.")
+            bot.register_next_step_handler(msg, read_handler0)
 
 
 def show_msgs(message, thread):
@@ -245,12 +261,15 @@ def write_handler0(message):
 
 
 def write_handler1(message):
-    if check_for_existing_thread(message.text):
-        msg = bot.send_message(message.chat.id, "Now, please, enter the message text:")
-        bot.register_next_step_handler(msg, write_handler2, message.text)
+    if message.text.lower() == "quit":
+        bot.send_message(message.chat.id, "Quitting write_handler process")
     else:
-        msg = bot.send_message(message.chat.id, "Sorry, but it seems like this thread does not exist! Try again.")
-        bot.register_next_step_handler(msg, write_handler0)
+        if check_for_existing_thread(message.text):
+            msg = bot.send_message(message.chat.id, "Now, please, enter the message text:")
+            bot.register_next_step_handler(msg, write_handler2, message.text)
+        else:
+            msg = bot.send_message(message.chat.id, "Sorry, but it seems like this thread does not exist! Try again.")
+            bot.register_next_step_handler(msg, write_handler0)
 
 
 def write_handler2(message, threadname):
