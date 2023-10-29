@@ -1,3 +1,5 @@
+# (c) cat dev 2023
+
 from __code__.data_operations_handler import *
 from telebot import TeleBot, types
 
