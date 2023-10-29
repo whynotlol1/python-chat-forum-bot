@@ -1,6 +1,6 @@
 # ChatForumBot [DOES NOT WORK YET]
 ```
-version: 0.0.7
+version: 0.1.0
 ```
 # Requirements:
 ```
@@ -15,4 +15,10 @@ pip3 install sqlite3, telebot
 4. In the __misc__ directroy: create the _bot_token_.txt file (example: bot/__misc__/_bot_token_.txt)
 5. In the _bot_token_.txt file: paste your telegram bot token
 6. In the __misc__ directroy: create the _threads_ directory (example: bot/__misc__/_threads_/)
+```
+# Future plans
+```
+1. Host a bot and make it something bigger than just a github repo
+2. Make the bot asynchronous (there are some problems with this right now)
+3. Improve some things about the threads
 ```
