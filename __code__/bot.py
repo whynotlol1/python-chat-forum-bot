@@ -73,7 +73,7 @@ def login(user_id, require_password):
             msg = bot.send_message(user_id, f"Please, enter the password for {username}:")
             bot.register_next_step_handler(msg, login_step2)
         else:
-            bot.send_message(user_id, f"Welcome back, {username}! Use /help for the list of commands")
+            bot.send_message(user_id, f"Welcome back, {username}! Use /help for the list of commands.")
     else:
         bot.send_message(user_id, "Sorry, but you don't have an account yet! Use /start to register an account.")
 
@@ -158,7 +158,7 @@ def create_thread_step2(message):
         msg = bot.send_message(message.chat.id, "Now, please, give your thread a short description:")
         bot.register_next_step_handler(msg, create_thread_step3, message.text)
     else:
-        msg = bot.send_message(message.chat.id, f"There already exists a thread with name {message.text}")
+        msg = bot.send_message(message.chat.id, f"There already exists a thread with name {message.text}.")
         bot.register_next_step_handler(msg, create_thread)
 
 
@@ -211,19 +211,24 @@ def read_handler0(message):
 def read_handler1(message):
     if check_for_existing_thread(message.text):
         thread = parse_thread(message.text)
-        bot.send_message(message.chat.id, f"Now reading the {thread['global_info']['name']} thread")
-        msg = bot.send_message(message.chat.id, "How many latest messages of this thread do you want to see? (Type a number)")
-        bot.register_next_step_handler(msg, show_msgs, thread)
+        if len(thread["messages"]) != 0:
+            bot.send_message(message.chat.id, f"Now reading the {thread['global_info']['name']} thread.")
+            msg = bot.send_message(message.chat.id, "How many latest messages of this thread do you want to see? (Type a number)")
+            bot.register_next_step_handler(msg, show_msgs, thread)
+        else:
+            bot.send_message(message.chat.id, "There are no messages in this thread.")
     else:
         msg = bot.send_message(message.chat.id, "Sorry, but it seems like this thread does not exist! Try again.")
         bot.register_next_step_handler(msg, read_handler0)
 
 
 def show_msgs(message, thread):
-    if message.text <= len(thread["messages"]):
-        for i in range((len(thread["messages"]) - message.text), len(thread["messages"])):
+    if int(message.text) <= len(thread["messages"]):
+        bot.send_message(message.chat.id, f"There are the {message.text} latest messages in this thread:")
+        for i in range((len(thread["messages"]) - int(message.text)), len(thread["messages"])):
             bot.send_message(message.chat.id, f"{thread['messages'][i][0]}: {thread['messages'][i][1]}")
     else:
+        bot.send_message(message.chat.id, f"There are less than {message.text} messages in this thread. Here they are:")
         for i in range(len(thread["messages"])):
             bot.send_message(message.chat.id, f"{thread['messages'][i][0]}: {thread['messages'][i][1]}")
 
