@@ -23,6 +23,6 @@ pip3 install sqlite3, telebot
 3. Improve some things about the threads
 ```
 # Credits
-(@artkegor)[https://github.com/artkegor] - testing the bot
+[@artkegor](https://github.com/artkegor) - testing the bot
 # ---<>---<>---
 (c) cat dev 2023
