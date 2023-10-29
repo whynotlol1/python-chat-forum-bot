@@ -20,7 +20,7 @@ pip3 install sqlite3, telebot
 # Future plans
 ```
 1. Host a bot and make it something bigger than just a github repo
-2. Make the bot asynchronous (there are some problems with this right now)
+2. Make the bot asynchronous (there are some problems with AsyncTeleBot right now)
 3. Improve some things about the threads
 ```
 # Credits
