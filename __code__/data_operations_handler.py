@@ -1,3 +1,5 @@
+# (c) cat dev 2023
+
 import sqlite3
 import json
 
