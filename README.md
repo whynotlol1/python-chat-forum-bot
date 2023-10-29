@@ -1,4 +1,4 @@
-# ChatForumBot [DOES NOT WORK YET]
+# ChatForumBot
 ```
 version: 0.1.0
 ```
@@ -22,3 +22,5 @@ pip3 install sqlite3, telebot
 2. Make the bot asynchronous (there are some problems with this right now)
 3. Improve some things about the threads
 ```
+
+(c) cat dev 2023
