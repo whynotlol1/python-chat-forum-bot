@@ -123,7 +123,7 @@ def login_step2(message):
 
 
 def register(user_id):
-    msg = bot.send_message(user_id, "Plese, enter your username:")
+    msg = bot.send_message(user_id, "Please, enter your username:")
     bot.register_next_step_handler(msg, register_step2)
 
 
