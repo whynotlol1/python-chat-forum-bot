@@ -220,7 +220,7 @@ def return_threads_list(message):
         threads_list = get_threads_list()
         msg = "Threads: \n"
         for el in threads_list:
-            msg += f"Name: {el[2]} | Description: {el[3]} \n"
+            msg += f"Name: {el[2]} | Description: {el[3]} | Messages: {el[4]}\n"
             msg += ("-" * 20) + "\n"
         bot.send_message(message.chat.id, msg)
     else:
@@ -240,7 +240,7 @@ def return_threads_list_by_user_id(user_id):
     msg = "Threads you created: \n"
     for el in threads_list:
         if el[1] == user_id:
-            msg += f"Name: {el[2]} | Description: {el[3]} \n"
+            msg += f"Name: {el[2]} | Description: {el[3]} | Messages: {el[4]} \n"
             msg += ("-" * 20) + "\n"
     bot.send_message(user_id, msg)
 
