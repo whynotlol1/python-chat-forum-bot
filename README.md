@@ -23,6 +23,7 @@ pip3 install sqlite3, telebot
 2. Make the bot asynchronous (there are some problems with AsyncTeleBot right now)
 3. Improve some things about the threads
 4. Passwords encryption & decryption
+5. Subscribing to threads [?]
 ```
 # Credits
 [@artkegor](https://github.com/artkegor) - testing the bot
