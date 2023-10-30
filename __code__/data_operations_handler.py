@@ -23,8 +23,7 @@ CREATE TABLE IF NOT EXISTS threads
     id INTEGER,
     author_id INTEGER,
     threadname TEXT,
-    description TEXT,
-    messages INTEGER
+    description TEXT
 )
 """)
 conn.commit()
@@ -122,10 +121,7 @@ def parse_thread(threadname):
 def write_to(threadname, user_id, message_text):
     username = get_data(user_id, "username")
     thread = parse_thread(threadname)
-    msgs_amount = cur.execute("SELECT * FROM threads WHERE threadname=?", (threadname,)).fetchone()[4]
     thread["messages"].append([username, message_text])
     file_path = f"__misc__/_threads_/{threadname}.json"
     with open(file_path, "w") as output:
         output.write(json.dumps(thread))
-    cur.execute("UPDATE threads SET messages=? WHERE threadname=?", (int(msgs_amount), threadname))
-    conn.commit()
