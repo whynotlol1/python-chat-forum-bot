@@ -1,12 +1,12 @@
 # ---<>---<>---
 # ChatForumBot
 ```
-version: 0.1.2
+version: 0.1.1
 ```
 # Requirements:
 ```
 python 3.10+
-pip3 install sqlite3, telebot, pygame
+pip3 install sqlite3, telebot
 ```
 # Make the bot work
 ```
