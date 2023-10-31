@@ -5,16 +5,15 @@
 
 > pip3 install sqlite3, telebot
 
-## Make the bot work
+## Important:
 
-1. Create the project directory (example: bot/)
-2. In the project directory: paste the whole __code__ directory (example: bot/__code__/...)
-3. In the project directory: create the __misc__ directory (example: bot/__misc__/)
-4. In the __misc__ directroy: create the _bot_token_.txt file (example: bot/__misc__/_bot_token_.txt)
-5. In the _bot_token_.txt file: paste your telegram bot token
-6. In the __misc__ directroy: create the _threads_ directory (example: bot/__misc__/_threads_/)
+Note that just installing the source code and running ```main.py``` will not be enough! First you need to do these steps:
+1. Make sure your python setup meets **all** the requirements above
+2. Create your own telegram bot with [@BotFather](https://telegram.me/BotFather)
+3. Copy the bot's API token and pate it into the ```__misc__/_bot_token_.txt``` file
+4. Create the ```__misc__/_threads_``` directory
 
-## Future plans
+## Future plans:
 
 1. Host a bot and make it something bigger than just a github repo
 2. Make the bot asynchronous (there are some problems with AsyncTeleBot right now)
