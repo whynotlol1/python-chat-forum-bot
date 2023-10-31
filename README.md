@@ -7,7 +7,7 @@
 
 ## Important:
 
-Note that just installing the source code and running ```main.py``` will not be enough! First you need to do these steps:
+Note that just installing the source code and running ```main.py``` will not be enough to make the telegram bot work! First you need to do these steps:
 1. Make sure your python setup meets **all** the requirements above
 2. Create your own telegram bot with [@BotFather](https://telegram.me/BotFather)
 3. Copy the bot's API token and pate it into the ```__misc__/_bot_token_.txt``` file
