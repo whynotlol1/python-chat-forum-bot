@@ -1,5 +1,4 @@
-# ---<>---<>---
-# ChatForumBot version 0.1.1
+# ---<>---<>--- ChatForumBot ---<>---<>---
 ## Requirements:
 
 > python 3.10+
@@ -25,5 +24,5 @@
 
 ## Credits
 > [@artkegor](https://github.com/artkegor) - testing the bot
-# ---<>---<>---
+# ---<>---<>--- ChatForumBot ---<>---<>---
 (c) cat dev 2023
