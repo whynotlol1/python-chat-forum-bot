@@ -131,6 +131,7 @@ def write_to(threadname, user_id, message_text):
     for username in thread["subbed_by"]:
         user_id = cur.execute("SELECT * FROM users WHERE username=?", (username,)).fetchone()[0]
         ids_returned.append(user_id)
+    return ids_returned
 
 
 def sub_to_thread(user_id, threadname):
