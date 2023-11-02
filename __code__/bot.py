@@ -20,7 +20,9 @@ commands_list = {
         ["/thread_list", "See the list of all threads"],
         ["/my_threads", "See the list of your threads"],
         ["/read_thread", "Read one of the threads"],
-        ["/write_to_thread", "Write a message in one of the threads"]
+        ["/write_to_thread", "Write a message in one of the threads"],
+        ["/subscribe", "Subscribe to one of the threads"],
+        ["/unsubscribe", "Unsubscribe from one of the threads"]
     ]
 }
 rules_list = {
@@ -304,5 +306,50 @@ def write_handler1(message):
 
 
 def write_handler2(message, threadname):
-    write_to(threadname, message.chat.id, message.text)
+    user_ids = write_to(threadname, message.chat.id, message.text)
     bot.send_message(message.chat.id, f"Your message has been successfully added to the {threadname} thread!")
+    if len(user_ids) != 0:
+        for user_id in user_ids:
+            bot.send_message(user_id, f"There's a new message in the {threadname} thread you're subscribed to:\n{message.chat.id}: {message.text}")
+
+
+@bot.message_handler(commands="subscribe")
+def sub_handler0(message):
+    if check_user_login(message.chat.id):
+        msg = bot.send_message(message.chat.id, "What thread would you like to subscribe to?")
+        bot.register_next_step_handler(msg, sub_handler1)
+    else:
+        starting_handler(message)
+
+
+def sub_handler1(message):
+    if message.text.lower() == "quit":
+        bot.send_message(message.chat.id, "Quitting write_handler process")
+    else:
+        if check_for_existing_thread(message.text):
+            sub_to_thread(message.chat.id, message.text)
+            bot.send_message(message.chat.id, f"Now you are subscribed to the {message.text} thread!")
+        else:
+            msg = bot.send_message(message.chat.id, "Sorry, but it seems like this thread does not exist! Try again.")
+            bot.register_next_step_handler(msg, sub_handler1)
+
+
+@bot.message_handler(commands="unsubscribe")
+def unsub_handler0(message):
+    if check_user_login(message.chat.id):
+        msg = bot.send_message(message.chat.id, "What thread would you like to unsubscribe from?")
+        bot.register_next_step_handler(msg, unsub_handler1)
+    else:
+        starting_handler(message)
+
+
+def unsub_handler1(message):
+    if message.text.lower() == "quit":
+        bot.send_message(message.chat.id, "Quitting write_handler process")
+    else:
+        if check_for_existing_thread(message.text):
+            unsub_from_thread(message.chat.id, message.text)
+            bot.send_message(message.chat.id, f"Now you are no longer subscribed to the {message.text} thread!")
+        else:
+            msg = bot.send_message(message.chat.id, "Sorry, but it seems like this thread does not exist! Try again.")
+            bot.register_next_step_handler(msg, unsub_handler1)
