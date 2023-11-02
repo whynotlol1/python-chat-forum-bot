@@ -310,7 +310,7 @@ def write_handler2(message, threadname):
     bot.send_message(message.chat.id, f"Your message has been successfully added to the {threadname} thread!")
     if len(user_ids) != 0:
         for user_id in user_ids:
-            bot.send_message(user_id, f"There's a new message in the {threadname} thread you're subscribed to:\n{message.chat.id}: {message.text}")
+            bot.send_message(user_id, f"There's a new message in the {threadname} thread you're subscribed to:\n{get_data(message.chat.id, "username")}: {message.text}")
 
 
 @bot.message_handler(commands="subscribe")
