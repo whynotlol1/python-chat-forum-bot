@@ -84,7 +84,7 @@ def check_for_unique_threadname(threadname):
 
 
 def add_thread(thread_id, user_id, threadname, description):
-    cur.execute("INSERT INTO threads VALUES (?,?,?,?,?)", (int(thread_id), int(user_id), threadname, description, 0))
+    cur.execute("INSERT INTO threads VALUES (?,?,?,?)", (int(thread_id), int(user_id), threadname, description))
     conn.commit()
     add_thread_to_list(thread_id, user_id, threadname, description)
 
@@ -97,7 +97,8 @@ def add_thread_to_list(thread_id, user_id, threadname, description):
             "name": threadname,
             "desc": description
         },
-        "messages": []
+        "messages": [],
+        "subbed_by": []
     }
     file_path = f"__misc__/_threads_/{threadname}.json"
     with open(file_path, "w") as output:
@@ -125,3 +126,28 @@ def write_to(threadname, user_id, message_text):
     file_path = f"__misc__/_threads_/{threadname}.json"
     with open(file_path, "w") as output:
         output.write(json.dumps(thread))
+    thread = parse_thread(threadname)
+    ids_returned = []
+    for username in thread["subbed_by"]:
+        user_id = cur.execute("SELECT * FROM users WHERE username=?", (username,)).fetchone()[0]
+        ids_returned.append(user_id)
+
+
+def sub_to_thread(user_id, threadname):
+    username = get_data(user_id, "username")
+    thread = parse_thread(threadname)
+    if username not in thread["subbed_by"]:
+        thread["subbed_by"].append(username)
+        file_path = f"__misc__/_threads_/{threadname}.json"
+        with open(file_path, "w") as output:
+            output.write(json.dumps(thread))
+
+
+def unsub_from_thread(user_id, threadname):
+    username = get_data(user_id, "username")
+    thread = parse_thread(threadname)
+    if username in thread["subbed_by"]:
+        del thread["subbed_by"][thread["subbed_by"].index(username)]
+        file_path = f"__misc__/_threads_/{threadname}.json"
+        with open(file_path, "w") as output:
+            output.write(json.dumps(thread))
