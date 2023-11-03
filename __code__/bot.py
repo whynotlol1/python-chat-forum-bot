@@ -325,7 +325,7 @@ def sub_handler0(message):
 
 def sub_handler1(message):
     if message.text.lower() == "quit":
-        bot.send_message(message.chat.id, "Quitting write_handler process")
+        bot.send_message(message.chat.id, "Quitting sub_handler process")
     else:
         if check_for_existing_thread(message.text):
             sub_to_thread(message.chat.id, message.text)
@@ -346,7 +346,7 @@ def unsub_handler0(message):
 
 def unsub_handler1(message):
     if message.text.lower() == "quit":
-        bot.send_message(message.chat.id, "Quitting write_handler process")
+        bot.send_message(message.chat.id, "Quitting unsub_handler process")
     else:
         if check_for_existing_thread(message.text):
             unsub_from_thread(message.chat.id, message.text)
