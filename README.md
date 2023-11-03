@@ -1,4 +1,5 @@
 # ---<>---<>--- ChatForumBot ---<>---<>---
+# Project development is temporarily stopped due to technical issues
 ## Requirements:
 
 > python 3.10+
