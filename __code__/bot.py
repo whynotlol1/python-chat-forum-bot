@@ -13,7 +13,8 @@ commands_list = {
     ],
     "General": [
         ["/help", "See the list of commands"],
-        ["/rules", "See the list of rules"]
+        ["/rules", "See the list of rules"],
+        ["/report", "Report a user or a thread for breaking the rules"]
     ],
     "Threads": [
         ["/create_thread", "Create a new thread"],
@@ -188,11 +189,64 @@ def delete_account_step2(message):
             bot.send_message(message.chat.id, "Error: Wrong password!")
 
 
+@bot.message_handler(commands=["report"])
+def reporting(message):
+    if check_user_login(message.chat.id)[0]:
+        msg = bot.send_message(message.chat.id, "User / Thread [You can only stop the command execution (using 'quit') on this step!]")
+        bot.register_next_step_handler(msg, reporting_step2)
+    else:
+        starting_handler(message)
+
+
+def reporting_step2(message):
+    if message.text.lower() == "quit":
+        bot.send_message(message.chat.id, "Quitting delete_account process")
+    else:
+        if message.text.lower() not in ["user", "thread"]:
+            msg = bot.send_message(message.char.id, f"No such option: {message.text}!")
+            bot.register_next_step_handler(msg, reporting)
+        else:
+            match message.text.lower():
+                case "user":
+                    msg = bot.send_message(message.chat.id, "Specify the username:")
+                    bot.register_next_step_handler(msg, reporting_step3, message.text)
+                case "thread":
+                    msg = bot.send_message(message.chat.id, "Specify the threadname:")
+                    bot.register_next_step_handler(msg, reporting_step3, message.text)
+
+
+def reporting_step3(message, report_type):
+    if message.text.lower() == "quit":
+        bot.send_message(message.chat.id, "Quitting delete_account process")
+    else:
+        match report_type:
+            case "user":
+                if not check_for_unique_username(message.text):
+                    msg = bot.send_message(message.chat.id, "Specify the rule")
+                    bot.register_next_step_handler(msg, reporting_step4, (report_type, message.text))
+                else:
+                    bot.send_message(message.chat.id, "User does not exist")
+            case "thread":
+                if not check_for_unique_threadname(message.text):
+                    msg = bot.send_message(message.chat.id, "Specify the rule")
+                    bot.register_next_step_handler(msg, reporting_step4, (report_type, message.text))
+                else:
+                    bot.send_message(message.chat.id, "Thread does not exist")
+
+
+def reporting_step4(message, report_type, name):
+    report(get_data(message.chat.id, "username"), report_type, name, message.text)
+    bot.send_message(message.chat.id, f"{report_type.title()} reported for breaking {message.text} rule successfully!")
+    print("[LOG] New report! [LOG]")
+
+
 @bot.message_handler(commands=["create_thread"])
 def create_thread(message):
     if check_user_login(message.chat.id)[0]:
         msg = bot.send_message(message.chat.id, "What do you want the theme of the thread to be:")
         bot.register_next_step_handler(msg, create_thread_step2)
+    else:
+        starting_handler(message)
 
 
 def create_thread_step2(message):
@@ -260,7 +314,7 @@ def read_handler1(message):
     if message.text.lower() == "quit":
         bot.send_message(message.chat.id, "Quitting read_handler process")
     else:
-        if check_for_existing_thread(message.text):
+        if not check_for_unique_threadname(message.text):
             thread = parse_thread(message.text)
             if len(thread["messages"]) != 0:
                 bot.send_message(message.chat.id, f"Now reading the {thread['global_info']['name']} thread.")
@@ -297,7 +351,7 @@ def write_handler1(message):
     if message.text.lower() == "quit":
         bot.send_message(message.chat.id, "Quitting write_handler process")
     else:
-        if check_for_existing_thread(message.text):
+        if not check_for_unique_threadname(message.text):
             msg = bot.send_message(message.chat.id, "Now, please, enter the message text:")
             bot.register_next_step_handler(msg, write_handler2, message.text)
         else:
@@ -327,7 +381,7 @@ def sub_handler1(message):
     if message.text.lower() == "quit":
         bot.send_message(message.chat.id, "Quitting sub_handler process")
     else:
-        if check_for_existing_thread(message.text):
+        if not check_for_unique_threadname(message.text):
             sub_to_thread(message.chat.id, message.text)
             bot.send_message(message.chat.id, f"Now you are subscribed to the {message.text} thread!")
         else:
@@ -348,7 +402,7 @@ def unsub_handler1(message):
     if message.text.lower() == "quit":
         bot.send_message(message.chat.id, "Quitting unsub_handler process")
     else:
-        if check_for_existing_thread(message.text):
+        if not check_for_unique_threadname(message.text):
             unsub_from_thread(message.chat.id, message.text)
             bot.send_message(message.chat.id, f"Now you are no longer subscribed to the {message.text} thread!")
         else:
