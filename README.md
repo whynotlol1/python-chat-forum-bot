@@ -4,7 +4,7 @@
 
 > python 3.10+
 
-> pip3 install sqlite3, telebot
+> pip3 install sqlite3, telebot 
 
 ## Important:
 
