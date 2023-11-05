@@ -203,7 +203,7 @@ def reporting_step2(message):
         bot.send_message(message.chat.id, "Quitting delete_account process")
     else:
         if message.text.lower() not in ["user", "thread"]:
-            msg = bot.send_message(message.char.id, f"No such option: {message.text}!")
+            msg = bot.send_message(message.chat.id, f"No such option: {message.text}!")
             bot.register_next_step_handler(msg, reporting)
         else:
             match message.text.lower():
@@ -222,16 +222,16 @@ def reporting_step3(message, report_type):
         match report_type:
             case "user":
                 if not check_for_unique_username(message.text):
-                    msg = bot.send_message(message.chat.id, "Specify the rule")
+                    msg = bot.send_message(message.chat.id, "Specify the rule:")
                     bot.register_next_step_handler(msg, reporting_step4, (report_type, message.text))
                 else:
-                    bot.send_message(message.chat.id, "User does not exist")
+                    bot.send_message(message.chat.id, "User does not exist.")
             case "thread":
                 if not check_for_unique_threadname(message.text):
-                    msg = bot.send_message(message.chat.id, "Specify the rule")
+                    msg = bot.send_message(message.chat.id, "Specify the rule:")
                     bot.register_next_step_handler(msg, reporting_step4, (report_type, message.text))
                 else:
-                    bot.send_message(message.chat.id, "Thread does not exist")
+                    bot.send_message(message.chat.id, "Thread does not exist.")
 
 
 def reporting_step4(message, report_type, name):
