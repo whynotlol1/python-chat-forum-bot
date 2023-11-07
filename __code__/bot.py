@@ -13,8 +13,7 @@ commands_list = {
     ],
     "General": [
         ["/help", "See the list of commands"],
-        ["/rules", "See the list of rules"],
-        ["/report", "Report a user or a thread for breaking the rules"]
+        ["/rules", "See the list of rules"]
     ],
     "Threads": [
         ["/create_thread", "Create a new thread"],
@@ -187,56 +186,6 @@ def delete_account_step2(message):
             bot.send_message(message.chat.id, "Deleted your account successfully!")
         else:
             bot.send_message(message.chat.id, "Error: Wrong password!")
-
-
-@bot.message_handler(commands=["report"])
-def reporting(message):
-    if check_user_login(message.chat.id)[0]:
-        msg = bot.send_message(message.chat.id, "User / Thread [You can only stop the command execution (using 'quit') on this step!]")
-        bot.register_next_step_handler(msg, reporting_step2)
-    else:
-        starting_handler(message)
-
-
-def reporting_step2(message):
-    if message.text.lower() == "quit":
-        bot.send_message(message.chat.id, "Quitting delete_account process")
-    else:
-        if message.text.lower() not in ["user", "thread"]:
-            msg = bot.send_message(message.chat.id, f"No such option: {message.text}!")
-            bot.register_next_step_handler(msg, reporting)
-        else:
-            match message.text.lower():
-                case "user":
-                    msg = bot.send_message(message.chat.id, "Specify the username:")
-                    bot.register_next_step_handler(msg, reporting_step3, message.text)
-                case "thread":
-                    msg = bot.send_message(message.chat.id, "Specify the threadname:")
-                    bot.register_next_step_handler(msg, reporting_step3, message.text)
-
-
-def reporting_step3(message, report_type):
-    if message.text.lower() == "quit":
-        bot.send_message(message.chat.id, "Quitting delete_account process")
-    else:
-        match report_type:
-            case "user":
-                if not check_for_unique_username(message.text):
-                    msg = bot.send_message(message.chat.id, "Specify the rule:")
-                    bot.register_next_step_handler(msg, reporting_step4, (report_type, message.text))
-                else:
-                    bot.send_message(message.chat.id, "User does not exist.")
-            case "thread":
-                if not check_for_unique_threadname(message.text):
-                    msg = bot.send_message(message.chat.id, "Specify the rule:")
-                    bot.register_next_step_handler(msg, reporting_step4, (report_type, message.text))
-                else:
-                    bot.send_message(message.chat.id, "Thread does not exist.")
-
-
-def reporting_step4(message, report_type, name):
-    report(get_data(message.chat.id, "username"), report_type, name, message.text)
-    bot.send_message(message.chat.id, f"{report_type.title()} reported for breaking {message.text} rule successfully!")
 
 
 @bot.message_handler(commands=["create_thread"])
