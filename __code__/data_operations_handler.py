@@ -159,9 +159,3 @@ def unsub_from_thread(user_id, threadname):
         file_path = f"__misc__/_threads_/{threadname}.json"
         with open(file_path, "w") as output:
             output.write(json.dumps(thread))
-
-
-def report(reported_by, report_type, name, rule):
-    cur.execute("INSERT INTO reports VALUES (?,?,?,?)", (reported_by, report_type, name, int(rule)))
-    conn.commit()
-    print("[LOG] New report! [LOG]")
