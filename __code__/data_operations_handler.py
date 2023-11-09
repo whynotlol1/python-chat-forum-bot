@@ -28,17 +28,6 @@ CREATE TABLE IF NOT EXISTS threads
 """)
 conn.commit()
 
-cur.execute("""
-CREATE TABLE IF NOT EXISTS reports
-(
-    reported_by TEXT,
-    type TEXT,
-    user_or_thread_name TEXT,
-    rule INTEGER
-)
-""")
-conn.commit()
-
 
 def check_user_login(user_id):
     check = cur.execute("SELECT * FROM users WHERE user_id=?", (int(user_id),)).fetchone()
